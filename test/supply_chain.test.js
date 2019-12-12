@@ -41,11 +41,11 @@ contract('SupplyChain', function(accounts) {
         assert.equal(result[5], emptyAddress, 'the buyer address should be set to 0 when an item is added')
     })
 
-    it("should emit a LogForSale event when an item is added", async()=> {
+    it("should emit a LogEventForSale event when an item is added", async()=> {
         let eventEmitted = false
         const tx = await instance.addItem(name, price, {from: alice})
         
-        if (tx.logs[0].event == "LogForSale") {
+        if (tx.logs[0].event == "LogEventForSale") {
             eventEmitted = true
         }
 
@@ -76,13 +76,13 @@ contract('SupplyChain', function(accounts) {
         await catchRevert(instance.buyItem(0, {from: bob, value: 1}))
     })
 
-    it("should emit LogSold event when and item is purchased", async()=>{
+    it("should emit LogEventSold event when and item is purchased", async()=>{
         var eventEmitted = false
 
         await instance.addItem(name, price, {from: alice})
         const tx = await instance.buyItem(0, {from: bob, value: excessAmount})
 
-        if (tx.logs[0].event == "LogSold") {
+        if (tx.logs[0].event == "LogEventSold") {
             eventEmitted = true
         }
 
@@ -106,14 +106,14 @@ contract('SupplyChain', function(accounts) {
         assert.equal(result[3].toString(10), 2, 'the state of the item should be "Shipped", which should be declared third in the State Enum')
     })
 
-    it("should emit a LogShipped event when an item is shipped", async() => {
+    it("should emit a LogEventShipped event when an item is shipped", async() => {
         var eventEmitted = false
 
         await instance.addItem(name, price, {from: alice})
         await instance.buyItem(0, {from: bob, value: excessAmount})
         const tx = await instance.shipItem(0, {from: alice})
 
-        if (tx.logs[0].event == "LogShipped") {
+        if (tx.logs[0].event == "LogEventShipped") {
             eventEmitted = true
         }
 
@@ -139,7 +139,7 @@ contract('SupplyChain', function(accounts) {
         await catchRevert(instance.receiveItem(0, {from: alice}))
     })
 
-    it("should emit a LogReceived event when an item is received", async() => {
+    it("should emit a LogEventReceived event when an item is received", async() => {
         var eventEmitted = false
 
         await instance.addItem(name, price, {from: alice})
@@ -147,7 +147,7 @@ contract('SupplyChain', function(accounts) {
         await instance.shipItem(0, {from: alice})
         const tx = await instance.receiveItem(0, {from: bob})
         
-        if (tx.logs[0].event == "LogReceived") {
+        if (tx.logs[0].event == "LogEventReceived") {
             eventEmitted = true
         }
 
