@@ -46,10 +46,10 @@ contract SupplyChain {
   /* Create 4 events with the same name as each possible State (see above)
     Prefix each event with "Log" for clarity, so the forSale event will be called "LogForSale"
     Each event should accept one argument, the sku */
-    event LogEventForSale(uint sku);
-    event LogEventSold(uint sku);
-    event LogEventShipped(uint sku);
-    event LogEventReceived(uint sku);
+    event LogForSale(uint sku);
+    event LogSold(uint sku);
+    event LogShipped(uint sku);
+    event LogReceived(uint sku);
 /* Create a modifer that checks if the msg.sender is the owner of the contract */
   modifier isOwner (address _address) {
     require(_address == owner, "Sender is the owner of the contract");
@@ -99,7 +99,7 @@ contract SupplyChain {
   }
 
   function addItem(string memory _name, uint _price) public returns(bool){
-    emit LogEventForSale(skuCount);
+    emit LogForSale(skuCount);
     items[skuCount] = Item({name: _name, sku: skuCount, price: _price, state: State.ForSale, seller: msg.sender, buyer: address(0)});
     skuCount = skuCount + 1;
     return true;
@@ -121,7 +121,7 @@ contract SupplyChain {
     items[sku].seller.transfer(msg.value - items[sku].price);
     items[sku].buyer = msg.sender;
     items[sku].state = State.Sold;
-    emit LogEventSold(sku);
+    emit LogSold(sku);
   }
 
   /* Add 2 modifiers to check if the item is sold already, and that the person calling this function
@@ -132,7 +132,7 @@ contract SupplyChain {
     verifyCaller(items[sku].seller)
   {
     items[sku].state = State.Shipped;
-    emit LogEventShipped(sku);
+    emit LogShipped(sku);
   }
 
   /* Add 2 modifiers to check if the item is shipped already, and that the person calling this function
@@ -143,7 +143,7 @@ contract SupplyChain {
     verifyCaller(items[sku].buyer)
   {
     items[sku].state = State.Received;
-    emit LogEventReceived(sku);
+    emit LogReceived(sku);
   }
 
   /* We have these functions completed so we can run tests, just ignore it :) */
